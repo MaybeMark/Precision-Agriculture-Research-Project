@@ -1,3 +1,5 @@
+#  This program assumes linearity of response to nitrogen fertilizer
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -72,16 +74,10 @@ print("Sum after process: " + str(sum2_0 + sum2_1))
 print("Mean after process: " + str(mean))
 
 
-# listfert = matrix.copy(deep=True)
-# value = listfert.iterrows()[1]
-# for index, row in listfert.iterrows():
-#     if value < list3_1[0]:
-#         value = 0
-#     else:
-#         value = 2
-# print(listapp)  # Complete list
-# for item in list3_0:
-#     index = list1.index(item)  # index of item in original, unsorted list
+listfert = matrix.copy(deep=True)
+
+
+print(listapp)
 
 list3 = list2.to_numpy()
 
