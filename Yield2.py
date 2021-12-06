@@ -92,18 +92,16 @@ workbook = openpyxl.Workbook()
 workbook.save("C:\\Users\\markd.LAPTOP-UMFS8BI9\\PycharmProjects\\USDA\\Adjusted.xlsx")
 
 i = 1
+j=1
 wb = openpyxl.load_workbook("C:\\Users\\markd.LAPTOP-UMFS8BI9\\PycharmProjects\\USDA\\Adjusted.xlsx")
 wrksht1 = wb['Sheet']
-while i<30:
-    j = 1
-    while j<88:
-        k=1
-        while k<88:
-            for item in listapp:
-                wrksht1.cell(row=i, column=k).value = item
-                k=k+1
-        j = j + 1
-    i = i + 1
+
+for item in listapp:
+    if j ==88:
+        i=i+1
+        j=1
+    wrksht1.cell(row=i, column=j).value = item
+    j = j+1
 
 wb.save("Adjusted1.xlsx")
 
