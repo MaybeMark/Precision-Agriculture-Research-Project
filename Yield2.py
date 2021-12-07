@@ -21,6 +21,7 @@ print(list2.to_string())
 print("\n\n\n\n\n\n")
 
 listapp = []
+listfert = []
 list3 = np.array_split(list2, 2)  # Splits the list of numbers into two lists
 sum = 0.0
 for i in list3:
@@ -45,6 +46,7 @@ for item in list1:
         y1 = 50 + (m1 * 0)  # Fertilizer application adjusted
         print(y1)
         listapp.append(y1)
+        listfert.append(0)
         sum2_0 = sum2_0 + y1  # Sums all of the results (after process)
         sum2_0_1 = sum2_0_1 + y1_0  # Sums all of the results (before process)
     else:
@@ -59,6 +61,7 @@ for item in list1:
         y2 = 50 + (m2 * 2)  # Adjusted fertilizer application
         print(y2)
         listapp.append(y2)
+        listfert.append(2)
         sum2_1 = sum2_1 + y2  # Sums all of the results (after process)
         sum2_1_1 = sum2_1_1 + y2_0  # Sums all of the results (before process)
 
@@ -85,6 +88,7 @@ for item in list3:  # Replaces all values less than 0 with 0
     k += 1
 
 print("Standard Deviation: " + str(np.std(list3)))
+print("Median: "+str(median))
 
 print(len(matrix.columns))
 print(len(matrix))
@@ -94,7 +98,10 @@ workbook.save("C:\\Users\\markd.LAPTOP-UMFS8BI9\\PycharmProjects\\USDA\\Adjusted
 i = 1
 j=1
 wb = openpyxl.load_workbook("C:\\Users\\markd.LAPTOP-UMFS8BI9\\PycharmProjects\\USDA\\Adjusted.xlsx")
-wrksht1 = wb['Sheet']
+wrksht1 = wb.create_sheet("Optimized Yield", 0)
+wrksht2 = wb.create_sheet("Optimized Fertilizer")
+
+
 
 for item in listapp:
     if j ==88:
@@ -102,6 +109,15 @@ for item in listapp:
         j=1
     wrksht1.cell(row=i, column=j).value = item
     j = j+1
+
+i = 1
+j=1
+for item in listfert:
+    if j == 88:
+        i=i+1
+        j=1
+    wrksht2.cell(row=i,column=j).value = item
+    j=j+1
 
 wb.save("Adjusted1.xlsx")
 
