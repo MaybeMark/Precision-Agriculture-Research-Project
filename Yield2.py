@@ -14,6 +14,8 @@ list1 = matrix.stack()  # Flattens Dataframe into Series
 std = round(list1.std(), 4)
 list2 = list1.sort_values()  # Sorts the values in ascending order
 median = statistics.median(list2)
+mean1 = statistics.mean(list1)
+
 
 print(list1.to_string())
 print("\n\n\n\n\n\n")
@@ -45,8 +47,8 @@ for item in list1:
             y1_0 = 50 + (m1 * 1)  # Fertilizer application not adjusted
         y1 = 50 + (m1 * 0)  # Fertilizer application adjusted
         print(y1)
-        listapp.append(y1)
-        listfert.append(0)
+        listapp.append(y1)  # Creates list of optimized yield
+        listfert.append(0) # Creates list of prescribed fertilizer treatment
         sum2_0 = sum2_0 + y1  # Sums all of the results (after process)
         sum2_0_1 = sum2_0_1 + y1_0  # Sums all of the results (before process)
     else:
@@ -100,7 +102,7 @@ j=1
 wb = openpyxl.load_workbook("C:\\Users\\markd.LAPTOP-UMFS8BI9\\PycharmProjects\\USDA\\Adjusted.xlsx")
 wrksht1 = wb.create_sheet("Optimized Yield", 0)
 wrksht2 = wb.create_sheet("Optimized Fertilizer")
-
+wrksht3 = wb.create_sheet("Optimized Fertilzer Quadratic")
 
 
 for item in listapp:
@@ -119,9 +121,33 @@ for item in listfert:
     wrksht2.cell(row=i,column=j).value = item
     j=j+1
 
+
+# Quadratic-plus-plateau (not done)
+listquad = []
+i = 1
+j = 1
+for item in list1:
+    s = item/mean1  # Scaling Factor
+    #  print(s)
+    a = 6
+    b = 0.073
+    c = 0.0001689
+    a = a*s*208.5
+    b = b*s*208.5
+    c = c*s*208.5
+    deriv = b/(2*c)
+    listquad.append(deriv)
+
+for item in listquad:
+    if j == 88:
+        i=i+1
+        j=1
+    wrksht3.cell(row=i,column=j).value = item
+    print(str(i)+" "+str(j)+" "+str(item))
+    j=j+1
+
+
 wb.save("Adjusted1.xlsx")
-
-
 
 kwargs = dict(alpha=0.5, bins=100)
 plt.hist(list3, **kwargs, color='g')  # list3 is an array of list2
