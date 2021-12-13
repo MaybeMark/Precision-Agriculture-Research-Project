@@ -112,17 +112,18 @@ print("Median: " + str(median))
 print(len(matrix.columns))
 print(len(matrix))
 workbook = openpyxl.Workbook()
-workbook.save("C:\\Users\\markd.LAPTOP-UMFS8BI9\\PycharmProjects\\USDA\\AdjustedTemp.xlsx")
+workbook.save("AdjustedTemp.xlsx")
 
 i = 1
 j = 1
-wb = openpyxl.load_workbook("C:\\Users\\markd.LAPTOP-UMFS8BI9\\PycharmProjects\\USDA\\AdjustedTemp.xlsx")
+wb = openpyxl.load_workbook("AdjustedTemp.xlsx")
 wrksht1 = wb.create_sheet("Optimized Yield", 0)
 wrksht2 = wb.create_sheet("Optimized Fertilizer")
 wrksht3 = wb.create_sheet("Optimized Fertilzer Quadratic")
 
+cols = len(matrix.columns)
 for item in listapp:
-    if j == 88:
+    if j == cols+1:
         i = i + 1
         j = 1
     wrksht1.cell(row=i, column=j).value = item
@@ -131,7 +132,7 @@ for item in listapp:
 i = 1
 j = 1
 for item in listfert:
-    if j == 88:
+    if j == cols+1:
         i = i + 1
         j = 1
     wrksht2.cell(row=i, column=j).value = item
@@ -161,7 +162,7 @@ for item in list1:
         listquad.append(item)
 
 for item in listquad:
-    if j == 88:
+    if j == cols+1:
         i = i + 1
         j = 1
     wrksht3.cell(row=i, column=j).value = item
@@ -175,6 +176,9 @@ if os.path.exists("AdjustedTemp.xlsx"):
 else:
     print("The file has already been removed.")
 
+print(len(matrix))
+print(len(matrix.columns))
+# Frequency Distribution of data
 kwargs = dict(alpha=0.5, bins=100)
 plt.hist(list3, **kwargs, color='g')  # list3 is an array of list2
 plt.title("Yield Distribution")
@@ -185,5 +189,3 @@ plt.show()  # this creates the histogram
 
 #  EONR is calculated by the yield increase multiplied by the price of corn. That product is then subtracted by the
 #   cost of N
-
-#
