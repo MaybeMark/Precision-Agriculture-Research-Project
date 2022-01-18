@@ -6,34 +6,43 @@ import matplotlib.pyplot as plt
 import statistics
 import os
 
+matrix = pd.read_excel('APU_5_2017_soybeans_clip (1).xlsx', header=5, engine='openpyxl')
+matrix.to_excel('Linear Optimization - APU_5_2017_soybeans_clip (1).xlsx')
 
-def optimize():
-    # Step 1
-    # ----------------------------------------------------------------------------------------------------------------------
-    matrix = pd.read_excel('APU_5_2017_soybeans_clip (1).xlsx', header=5, engine='openpyxl')
-    matrix.to_excel('Linear Optimization - APU_5_2017_soybeans_clip (1).xlsx')
+if os.path.exists("Adjusted.xlsx"):
+    os.remove("Adjusted.xlsx")
 
-    if os.path.exists("Adjusted.xlsx"):
-        os.remove("Adjusted.xlsx")
+list1 = matrix.stack()  # Flattens Dataframe into Series
+list1_0 = []
+std = round(list1.std(), 4)
+list2 = list1.sort_values()  # Sorts the values in ascending order
+list2_0 = []
+list3 = []
+median = 0.0
+mean = 0.0
+global mean1
 
-    list1 = matrix.stack()  # Flattens Dataframe into Series
-    list1_0 = []
-    std = round(list1.std(), 4)
-    list2 = list1.sort_values()  # Sorts the values in ascending order
-    list2_0 = []
-    median = statistics.median(list2)
-    for item in list1:  # Creates a list without the NO DATA cells
-        if item > 0:
-            list1_0.append(item)
+workbook = openpyxl.Workbook()
+workbook.save("AdjustedTemp.xlsx")
+wb = openpyxl.load_workbook("AdjustedTemp.xlsx")
+wrksht1 = wb.create_sheet("Optimized Yield", 0)
+wrksht2 = wb.create_sheet("Optimized Fertilizer")
+wrksht3 = wb.create_sheet("Optimized Fertilzer Quadratic")
+cols = len(matrix.columns)
 
-    for item in list2:  # Creates numerically sorted list without the NO DATA cells
-        if item > 0:
-            list2_0.append(item)
-    mean1 = statistics.mean(list1_0)
-    median = statistics.median(list2_0)
-    print(mean1)
-    print(median)
+for item in list1:  # Creates a list without the NO DATA cells
+    if item > 0:
+        list1_0.append(item)
 
+for item in list2:  # Creates numerically sorted list without the NO DATA cells
+    if item > 0:
+        list2_0.append(item)
+mean1 = statistics.mean(list1_0)
+median = statistics.median(list2_0)
+print(mean1)
+print("Median"+str(median))
+
+def linoptimize():
     print(list1.to_string())
     print("\n\n\n\n\n\n")
     print(list2.to_string())
@@ -114,18 +123,13 @@ def optimize():
 
     print(len(matrix.columns))
     print(len(matrix))
-    workbook = openpyxl.Workbook()
-    workbook.save("AdjustedTemp.xlsx")
+
 
     i = 1
     j = 1
-    wb = openpyxl.load_workbook("AdjustedTemp.xlsx")
-    wrksht1 = wb.create_sheet("Optimized Yield", 0)
-    wrksht2 = wb.create_sheet("Optimized Fertilizer")
-    wrksht3 = wb.create_sheet("Optimized Fertilzer Quadratic")
-    cols = len(matrix.columns)
+
     for item in listapp:
-        if j == cols + 1:
+        if j == cols+1:
             i = i + 1
             j = 1
         wrksht1.cell(row=i, column=j).value = item
@@ -134,7 +138,7 @@ def optimize():
     i = 1
     j = 1
     for item in listfert:
-        if j == cols + 1:
+        if j == cols+1:
             i = i + 1
             j = 1
         wrksht2.cell(row=i, column=j).value = item
@@ -144,33 +148,58 @@ def optimize():
     # Quadratic-plus-plateau (not done)
     # ----------------------------------------------------------------------------------------------------------------------
 
+xx = .55
+yy = 208.5
+listquad2 = []
+
+def quadoptimize(x,y):
     listquad = []
+    listitem = []
+    listprofit = []
     i = 1
     j = 1
     for item in list1:
-        if item > 0:
+        if item >0:
+            m = (item*530)/(100*.405)
+            listitem.append(m)
+            print(m)
+    print("------------------------------")
+    for item in list1:
+        if item>0:
             s = item / mean1  # Scaling Factor
             #  print(s)
             a = 6
             b = 0.073
             c = 0.0001689
-            a = a * s * 208.5  # -------------------------------------------------------------------
-            b = (b * s * 208.5) - .55  # Each coefficient is multiplied by the price conversion and scaling factor
-            c = c * s * 208.5  # -------------------------------------------------------------------
+            a = a * s * y          # -------------------------------------------------------------------
+            b = (b * s * y) - x  # Each coefficient is multiplied by the price conversion and scaling factor
+            c = c * s * y         # -------------------------------------------------------------------
             deriv = b / (2 * c)
-            print(str(item) + " " + str(s) + " " + str(deriv))
+            profit = 1257 + 14.7*(deriv)-0.0354*(deriv*deriv)
+            # print(str(item) + " " + str(s) + " " + str(deriv))
             listquad.append(deriv)
+            listquad2.append(deriv)
+            listprofit.append(profit)
         else:
             listquad.append(item)
+            listquad2.append(item)
 
-    for item in listquad:
-        if j == cols + 1:
+    print("Adjusted Mean: "+str(statistics.mean(listprofit)))
+    print("Original Yield Mean: "+str(statistics.mean(listitem)))
+    print("Adjusted Median: "+str(statistics.median(listprofit)))
+    print("Original Yield Median: "+str(statistics.median(listitem)))
+    return listquad
+
+def save():
+    i = 1
+    j = 1
+    for item in listquad2:
+        if j == cols+1:
             i = i + 1
             j = 1
         wrksht3.cell(row=i, column=j).value = item
         print(str(i) + " " + str(j) + " " + str(item))
         j = j + 1
-
     wb.save("Adjusted.xlsx")
 
     if os.path.exists("AdjustedTemp.xlsx"):
@@ -178,6 +207,7 @@ def optimize():
     else:
         print("The file has already been removed.")
 
+def histogram():
     print(len(matrix))
     print(len(matrix.columns))
     # Frequency Distribution of data
@@ -192,5 +222,6 @@ def optimize():
     #  EONR is calculated by the yield increase multiplied by the price of corn. That product is then subtracted by the
     #   cost of N
 
-
-optimize()
+linoptimize()
+quadoptimize(xx, yy)
+save()
