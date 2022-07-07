@@ -1,4 +1,7 @@
-#  This program assumes linearity of response to nitrogen fertilizer
+#There are two main functions: 
+# -> linoptimize- linear optimization
+# -> quadoptimize - quadratic optimization
+
 import openpyxl
 import pandas as pd
 import numpy as np
